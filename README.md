@@ -60,6 +60,116 @@
     export default Layout
     ```
 
+4. **Gatsby Plugins**
+    [Plugins](https://www.gatsbyjs.com/plugins)
+
+    In Gatsby terms, a plugin is a separate npm package that you install to add extra features to your site.
+
+    - Install the plugin `npm install plugin-name`
+    - Add the plugin to the `gatsby-config.js`
+        ```javascript
+        module.exports = {
+          siteMetadata: {
+            title: "My First Gatsby Site",
+          },
+          plugins: ["plugin-name"], // Here
+        };
+        ```
+    - Some plugins may require extra `gatsby-config.js` use an object instead
+      ```javascript
+      plugins: [
+        {
+          resolve: "plugin-name",
+          options: {
+            // Check the plugin README for what options go in here
+          }
+        },
+      ]
+      ```
+    - After you make updates to your `gatsby-config.js` file, you’ll need to restart your `gatsby develop` process for your changes to be picked up.
+    - Use the plugin features in your site.
+
+
+    5. **Performant Images**
+
+    You can use the `gatsby-plugin-image` plugin to add responsive images to your site while maintaining high performance scores. `gatsby-plugin-image` exports a component called `StaticImage`, which you can use to load images from a remote URL or your local filesystem.
+
+    - Install `npm install gatsby-plugin-image gatsby-plugin-sharp gatsby-source-filesystem`
+    -         `npm install gatsby-plugin-image gatsby-plugin-sharp gatsby-source-filesystem gatsby-transformer-sharp`
+    - Add to the `config` file
+    ```javascript
+        plugins: [
+        "gatsby-plugin-gatsby-cloud",
+        "gatsby-plugin-image",
+        "gatsby-plugin-sharp"
+      ],
+    ```
+    - Use the module in your page
+    ```jsx
+    import { StaticImage } from 'gatsby-plugin-image'
+
+    <StaticImage
+        alt="Clifford, a reddish-brown pitbull, posing on a couch and looking stoically at the camera"
+        src="https://pbs.twimg.com/media/E1oMV3QVgAIr1NT?format=jpg&name=large"
+      />
+
+    <StaticImage
+        alt="Clifford, a reddish-brown pitbull, posing on a couch and looking stoically at the camera"
+        src="../images/clifford.jpg"
+      />
+    ```
+
+  6. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
