@@ -4,6 +4,71 @@
   </a>
 </p>
 <h1 align="center">
+  Cool Things
+</h1>
+
+## 🚀 Items
+
+1. **Pages**
+
+    In order to create a navigations link to a page,
+    just create the page in src/pages with a default export.
+
+    so src/pages/home.js
+
+    ```jsx
+    // Step 1: Import React
+    import * as React from 'react'
+
+    // Step 2: Define your component
+    const IndexPage = () => {
+      return (
+        <main>
+          <title>Home Page</title>
+          <h1>Welcome to my Gatsby site!</h1>
+          <p>Im making this by following the Gatsby Tutorial.</p>
+        </main>
+      )
+    }
+
+    // Step 3: Export your component
+    export default IndexPage
+    ```
+
+2. **Linking to other pages**
+    
+    Linking to a page on your site, use `Link` 
+    ```jsx
+    import { Link } from 'gatsby'
+    ```
+    Linking to other pages `<a>`
+
+3. **Styling**
+
+    Styling a component can be done with CSS Modules, to prevent class naming collisions. End the filename in `src/components/my-component.module.css`
+
+    ```jsx
+    import { container } from './layout.module.css'
+
+    const Layout = ({ pageTitle, children }) => {
+    return (
+        <main className={container}>
+        </main>
+      )
+    }
+
+    export default Layout
+    ```
+
+
+
+
+<p align="center">
+  <a href="https://www.gatsbyjs.com/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter">
+    <img alt="Gatsby" src="https://www.gatsbyjs.com/Gatsby-Monogram.svg" width="60" />
+  </a>
+</p>
+<h1 align="center">
   Gatsby minimal starter
 </h1>
 
