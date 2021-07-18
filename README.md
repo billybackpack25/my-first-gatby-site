@@ -120,100 +120,209 @@
     ```
 
 6. **Query for Data with GraphQL**
- 
-  - `localhost:8001/___graphql` give the GUI for GraphQL queries
-  - Using the graphQL UI to query the page title
-      ```javascript
-      // Query
-      query MyQuery {
-        site {
-          siteMetadata {
+     - `localhost:8001/___graphql` give the GUI for GraphQL queries
+     - Using the graphQL UI to query the page title
+       ```javascript
+       // Query
+       query MyQuery {
+         site {
+           siteMetadata {
+             title
+           }
+         }
+       }
+
+       // Result
+       {
+         "data": {
+           "site": {
+             "siteMetadata": {
+               "title": "My first gatby site"
+             }
+           }
+         },
+         "extensions": {}
+       }
+       ```
+
+     - Then in your components
+         ```jsx
+         import { Link, useStaticQuery, graphql } from 'gatsby'
+         const data = useStaticQuery(graphql`
+           query {
+             site {
+               siteMetadata {
+                 title
+               }
+             }
+           }
+         `)
+       
+         <title>Home Page | {data.site.siteMetadata.title}</title>
+         ```
+     
+     - Including blog pages from GraphQL
+       - Create a direcotry in the root names blog
+       - Then pages with `.mdx` extention
+       - Add the `gatsby-course-filesystem` plugin
+       ```javascript
+         module.exports = {
+         siteMetadata: {
+           title: "My First Gatsby Site",
+         },
+           plugins: [
+             "gatsby-plugin-gatsby-cloud",
+             "gatsby-plugin-image",
+             "gatsby-plugin-sharp",
+             {
+               resolve: "gatsby-source-filesystem", //
+               options: {                           //
+                 name: `blog`,                      //
+                 path: `${__dirname}/blog`,         //
+               }
+             },
+           ],
+         };
+       ```
+     - Using GraphQL queries in pages will be different to components
+     ```jsx
+     import { graphql } from 'gatsby'
+     const BlogPage = ({data}) => {
+         return (
+             <Layout pageTitle="My Blog Posts">
+                 <ul>
+                     {
+                         data.allFile.nodes.map(node => (
+                             <li key={node.name}>
+                                 {node.name}
+                             </li>
+                         ))
+                     }
+                 </ul>
+             </Layout>
+         )
+     }
+
+     export const query = graphql`
+       query {
+           allFile {
+             nodes {
+               name
+             }
+           }
+         }`
+     ```
+
+7. **Adding MDX files - Reading blog posts**
+    - Make a file in the root called blog
+    - Add some files ending in `.mdx`
+      ```md
+      ---
+      title: "My First Post"
+      date: "2021-07-23"
+      ---
+
+      This is my first blog post! Isn't it *great*?
+
+      Some of my **favorite** things are:
+
+      * Petting dogs
+      * Singing
+      * Eating potato-based foods
+      ```
+    - Install `npm install gatsby-plugin-mdx @mdx-js/mdx @mdx-js/react`
+    - Add plugin to the `gatsby-config.js`
+    - Create the GraphQL query to get the data
+    ```sql
+    query MyQuery {
+      allMdx(sort: {fields: frontmatter___date, order: DESC}) {
+        nodes {
+          frontmatter {
+            date(formatString: "MMMM D, YYYY")
             title
           }
+          id
+          body
         }
       }
-
-      // Result
-      {
-        "data": {
-          "site": {
-            "siteMetadata": {
-              "title": "My first gatby site"
-            }
-          }
-        },
-        "extensions": {}
-      }
-      ```
-
-  - Then in your components
-      ```jsx
-      import { Link, useStaticQuery, graphql } from 'gatsby'
-      const data = useStaticQuery(graphql`
-        query {
-          site {
-            siteMetadata {
-              title
-            }
-          }
-        }
-      `)
-    
-      <title>Home Page | {data.site.siteMetadata.title}</title>
-      ```
-  
-  - Including blog pages from GraphQL
-    - Create a direcotry in the root names blog
-    - Then pages with `.mdx` extention
-    - Add the `gatsby-course-filesystem` plugin
-    ```javascript
-      module.exports = {
-      siteMetadata: {
-        title: "My First Gatsby Site",
-      },
-        plugins: [
-          "gatsby-plugin-gatsby-cloud",
-          "gatsby-plugin-image",
-          "gatsby-plugin-sharp",
-          {
-            resolve: "gatsby-source-filesystem", //
-            options: {                           //
-              name: `blog`,                      //
-              path: `${__dirname}/blog`,         //
-            }
-          },
-        ],
-      };
+    }
     ```
-  - Using GraphQL queries in pages will be different to components
-  ```jsx
-  import { graphql } from 'gatsby'
-  const BlogPage = ({data}) => {
-      return (
-          <Layout pageTitle="My Blog Posts">
-              <ul>
-                  {
-                      data.allFile.nodes.map(node => (
-                          <li key={node.name}>
-                              {node.name}
-                          </li>
-                      ))
-                  }
-              </ul>
-          </Layout>
-      )
-  }
+    - The response should look similar to the below
+    ```json
+    {
+      "data": {
+        "allMdx": {
+          "nodes": [
+            {
+              "frontmatter": {
+                "date": "July 25, 2021",
+                "title": "Yet Another Post"
+              },
+              "id": "c4b5ae6d-f3ad-5ea4-ab54-b08a72badea1"
+            },
+            {
+              "frontmatter": {
+                "date": "July 24, 2021",
+                "title": "Another Post"
+              },
+              "id": "560896e4-0148-59b8-9a2b-bf79bee68fba"
+            },
+            {
+              "frontmatter": {
+                "date": "July 23, 2021",
+                "title": "My First Post"
+              },
+              "id": "11b3a825-30c5-551d-a713-dd748e7d554a"
+            }
+          ]
+        }
+      },
+      "extensions": {}
+    }
+    ```
+    - Use the `MDXRenderer` to render the body
+    ```jsx
+    import { MDXRenderer } from 'gatsby-plugin-mdx'
+    import * as React from 'react'
+    import { graphql } from 'gatsby'
+    import { MDXRenderer } from 'gatsby-plugin-mdx'
+    import Layout from '../components/layout'
 
-  export const query = graphql`
-    query {
-        allFile {
+    const BlogPage = ({ data }) => {
+      return (
+        <Layout pageTitle="My Blog Posts">
+          {
+            data.allMdx.nodes.map((node) => (
+              <article key={node.id}>
+                <h2>{node.frontmatter.title}</h2>
+                <p>Posted: {node.frontmatter.date}</p>
+                <MDXRenderer> // MDXRenderer
+                  {node.body}
+                </MDXRenderer>
+              </article>
+            ))
+          }
+        </Layout>
+      )
+    }
+
+    export const query = graphql`
+      query {
+        allMdx(sort: {fields: frontmatter___date, order: DESC}) {
           nodes {
-            name
+            frontmatter {
+              title
+              date(formatString: "MMMM DD, YYYY")
+            }
+            id
+            body
           }
         }
-      }`
-  ```
+      }
+    `
 
+    export default BlogPage
+    ``` 
 
 
 
