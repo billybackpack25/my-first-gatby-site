@@ -90,7 +90,7 @@
     - Use the plugin features in your site.
 
 
-    5. **Performant Images**
+5. **Performant Images**
 
     You can use the `gatsby-plugin-image` plugin to add responsive images to your site while maintaining high performance scores. `gatsby-plugin-image` exports a component called `StaticImage`, which you can use to load images from a remote URL or your local filesystem.
 
@@ -119,12 +119,100 @@
       />
     ```
 
-  6. 
+6. **Query for Data with GraphQL**
+ 
+  - `localhost:8001/___graphql` give the GUI for GraphQL queries
+  - Using the graphQL UI to query the page title
+      ```javascript
+      // Query
+      query MyQuery {
+        site {
+          siteMetadata {
+            title
+          }
+        }
+      }
 
+      // Result
+      {
+        "data": {
+          "site": {
+            "siteMetadata": {
+              "title": "My first gatby site"
+            }
+          }
+        },
+        "extensions": {}
+      }
+      ```
 
+  - Then in your components
+      ```jsx
+      import { Link, useStaticQuery, graphql } from 'gatsby'
+      const data = useStaticQuery(graphql`
+        query {
+          site {
+            siteMetadata {
+              title
+            }
+          }
+        }
+      `)
+    
+      <title>Home Page | {data.site.siteMetadata.title}</title>
+      ```
+  
+  - Including blog pages from GraphQL
+    - Create a direcotry in the root names blog
+    - Then pages with `.mdx` extention
+    - Add the `gatsby-course-filesystem` plugin
+    ```javascript
+      module.exports = {
+      siteMetadata: {
+        title: "My First Gatsby Site",
+      },
+        plugins: [
+          "gatsby-plugin-gatsby-cloud",
+          "gatsby-plugin-image",
+          "gatsby-plugin-sharp",
+          {
+            resolve: "gatsby-source-filesystem", //
+            options: {                           //
+              name: `blog`,                      //
+              path: `${__dirname}/blog`,         //
+            }
+          },
+        ],
+      };
+    ```
+  - Using GraphQL queries in pages will be different to components
+  ```jsx
+  import { graphql } from 'gatsby'
+  const BlogPage = ({data}) => {
+      return (
+          <Layout pageTitle="My Blog Posts">
+              <ul>
+                  {
+                      data.allFile.nodes.map(node => (
+                          <li key={node.name}>
+                              {node.name}
+                          </li>
+                      ))
+                  }
+              </ul>
+          </Layout>
+      )
+  }
 
-
-
+  export const query = graphql`
+    query {
+        allFile {
+          nodes {
+            name
+          }
+        }
+      }`
+  ```
 
 
 
